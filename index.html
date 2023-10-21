@@ -20,7 +20,7 @@
             <input id="grade" type="number" min="1" max="100" class="form-control" autofocus required>
 
             <button id="newStudentForm" class="btn btn-dark mt-3">+ Add Record</button>
-      
+          
     </div>
     <div class="container p-5 shadow">
         <h1 class="fw-bold">Students</h1>
@@ -43,7 +43,7 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js'
+        import { getFirestore, collection, onSnapshot, addDoc, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js'
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
       
@@ -64,7 +64,8 @@
         // Initialize Cloud Firestore and get a reference to the service
         const db = getFirestore(app);
 
-        onSnapshot(collection(db, "students"), snapshot => {
+        // Get the records in the DB/firestore
+        onSnapshot(query(collection(db, "students"), orderBy("lastname", "asc")), snapshot => {
             document.querySelector("#tableArea").innerHTML = "";
             snapshot.forEach(student => {
                 let studentRow = `
@@ -101,6 +102,9 @@
             document.querySelector("#grade").value = "";
 
         });
+
+
+        
       </script>
 </body>
 </html>
