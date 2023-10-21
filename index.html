@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container p-5 my-5 shadow">
+        <h1 class="fw-bold">Add New Student Record</h1>
+        
+            <label for="firstname">First Name:</label>
+            <input id="firstname" type="text" class="form-control" autofocus required>
+            <label for="lastname">Last Name:</label>
+            <input id="lastname" type="text" class="form-control" required>
+            <label for="batch">Batch:</label>
+            <input id="batch" type="number" min="1" class="form-control" required>
+            <label for="grade">Grade:</label>
+            <input id="grade" type="number" min="1" max="100" class="form-control" autofocus required>
+
+            <button id="newStudentForm" class="btn btn-dark mt-3">+ Add Record</button>
+      
+    </div>
+    <div class="container p-5 shadow">
+        <h1 class="fw-bold">Students</h1>
+        <table class="table table-dark table-hover table-responsive-md" id="datatable">
+            <thead>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Batch</th>
+                <th>Grade</th>
+
+            </thead>
+            <tbody id="tableArea">
+                
+            </tbody>
+        </table>
+    </div>
+
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, addDoc } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js'
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyBQzTebHoWEVU4fR2jvVzEhAa4kgIgZ4SM",
+          authDomain: "studentrecords-6b2d8.firebaseapp.com",
+          projectId: "studentrecords-6b2d8",
+          storageBucket: "studentrecords-6b2d8.appspot.com",
+          messagingSenderId: "391404059677",
+          appId: "1:391404059677:web:1a599384d950114405daf4",
+          measurementId: "G-WH8YRY49J3"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        // Initialize Cloud Firestore and get a reference to the service
+        const db = getFirestore(app);
+
+        onSnapshot(collection(db, "students"), snapshot => {
+            document.querySelector("#tableArea").innerHTML = "";
+            snapshot.forEach(student => {
+                let studentRow = `
+                <tr>
+                    <td>${student.data().id}</td>
+                    <td>${student.data().firstname}</td>
+                    <td>${student.data().lastname}</td>
+                    <td>${student.data().batch}</td>
+                    <td>${student.data().grade}</td>
+                </tr>`;
+                document.querySelector("#tableArea").innerHTML += studentRow;
+            });
+        });
+
+        document.querySelector("#newStudentForm").addEventListener("click", () => {
+                    
+            let firstname = document.querySelector("#firstname").value;
+            let lastname = document.querySelector("#lastname").value;
+            let batch = document.querySelector("#batch").value;
+            let grade = document.querySelector("#grade").value;
+
+            //Insert into Firestore Database.
+            addDoc(collection(db, "students"), {
+                firstname: firstname,
+                lastname: lastname,
+                batch: batch,
+                grade: grade
+            });
+
+            // after natin mag-add ng record, we just want to clear textbox sa form.
+            document.querySelector("#firstname").value = "";
+            document.querySelector("#lastname").value = "";
+            document.querySelector("#batch").value = "";
+            document.querySelector("#grade").value = "";
+
+        });
+      </script>
+</body>
+</html>
